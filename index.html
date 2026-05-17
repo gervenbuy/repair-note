@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電動滑板車維修筆記</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #22263a;
+    --accent: #4f9cf9;
+    --accent2: #f97316;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8eaf0;
+    --muted: #8b90a0;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Noto Sans TC', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* header */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 1.5rem 1.5rem;
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .header-icon {
+    font-size: 3rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 18px rgba(79,156,249,0.4));
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .header-text h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .header-text p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-family: var(--mono);
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-blue { border-color: var(--accent); color: var(--accent); }
+  .badge-green { border-color: var(--green); color: var(--green); }
+  .badge-amber { border-color: var(--amber); color: var(--amber); }
+
+  /* nav */
+  nav {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  nav a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  nav a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* main */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* section card */
+  .section-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadein 0.5s ease both;
+  }
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .section-card:nth-child(2) { animation-delay: 0.1s; }
+  .section-card:nth-child(3) { animation-delay: 0.2s; }
+  .section-card:nth-child(4) { animation-delay: 0.3s; }
+
+  .section-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg3);
+  }
+  .section-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .icon-blue { background: rgba(79,156,249,0.15); }
+  .icon-orange { background: rgba(249,115,22,0.15); }
+  .icon-green { background: rgba(34,197,94,0.15); }
+  .icon-amber { background: rgba(245,158,11,0.15); }
+
+  .section-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .section-header p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .section-body { padding: 1.5rem; }
+
+  /* spec grid */
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .spec-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .spec-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .spec-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .spec-val.accent { color: var(--accent); font-family: var(--mono); }
+  .spec-val.big { font-size: 22px; font-family: var(--mono); color: var(--accent); }
+
+  /* controller image */
+  .img-wrap {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+    background: var(--bg3);
+  }
+  .img-wrap img {
+    width: 100%;
+    max-height: 360px;
+    object-fit: contain;
+    display: block;
+    padding: 1rem;
+  }
+  .img-caption {
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+  }
+
+  /* wire tags */
+  .wire-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.75rem;
+  }
+  .wire-tag {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .wire-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .wt-red { border-color: rgba(239,68,68,0.5); color: #fca5a5; }
+  .wt-red .wire-dot { background: #ef4444; }
+  .wt-gray { border-color: rgba(139,144,160,0.4); color: var(--muted); }
+  .wt-gray .wire-dot { background: #8b90a0; }
+  .wt-orange { border-color: rgba(249,115,22,0.5); color: #fdba74; }
+  .wt-orange .wire-dot { background: #f97316; }
+  .wt-black { border-color: rgba(255,255,255,0.15); color: #d1d5db; }
+  .wt-black .wire-dot { background: #6b7280; }
+
+  /* warning block */
+  .warn-block {
+    display: flex;
+    gap: 10px;
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 1rem;
+    font-size: 13px;
+    color: #fcd34d;
+    align-items: flex-start;
+  }
+  .warn-block .wi { flex-shrink: 0; font-size: 16px; }
+
+  /* table */
+  .nb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 0.5rem;
+  }
+  .nb-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+  }
+  .nb-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .nb-table tr:last-child td { border-bottom: none; }
+  .nb-table tr:hover td { background: var(--bg3); }
+  .nb-table .mono { font-family: var(--mono); color: var(--accent); }
+  .nb-table .check { color: var(--green); }
+
+  /* compat tags */
+  .compat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.75rem;
+  }
+  .compat-tag {
+    font-size: 13px;
+    font-family: var(--mono);
+    padding: 5px 14px;
+    border-radius: 8px;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #86efac;
+  }
+
+  /* repair log */
+  .log-entry {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .log-entry:last-child { margin-bottom: 0; }
+  .log-date {
+    padding: 10px 14px;
+    background: var(--bg3);
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .log-body { padding: 14px; font-size: 14px; color: var(--muted); }
+  .log-body p { margin-bottom: 6px; }
+  .log-body p:last-child { margin-bottom: 0; }
+  .log-label { color: var(--text); font-weight: 500; margin-right: 6px; }
+
+  .empty-log {
+    text-align: center;
+    padding: 2.5rem;
+    color: var(--muted);
+    font-size: 14px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+  }
+  .empty-log .big { font-size: 2rem; margin-bottom: 8px; }
+
+  /* footer */
+  footer {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    header { padding: 1.25rem 1rem 1rem; }
+    nav { padding: 0.75rem 1rem; }
+    main { padding: 1.25rem 1rem 3rem; }
+    .spec-grid { grid-template-columns: 1fr 1fr; }
+    .header-text h1 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-icon">🛴</div>
+  <div class="header-text">
+    <h1>電動滑板車維修筆記
+      <span class="badge badge-blue">Public</span>
+    </h1>
+    <p>記錄維修過程、零件規格與設定參數，方便日後查閱與更新。</p>
+  </div>
+</header>
+
+<nav>
+  <a href="#controller">控制器</a>
+  <a href="#display">儀表設定</a>
+  <a href="#tire">輪胎規格</a>
+  <a href="#log">維修記錄</a>
+</nav>
+
+<main>
+
+  <!-- 控制器 -->
+  <div class="section-card" id="controller">
+    <div class="section-header">
+      <div class="section-icon icon-blue">⚡</div>
+      <div>
+        <h2>奧雄直流無刷控制器</h2>
+        <p>南京奧雄電子有限公司 · AXDZ20230307</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="img-wrap">
+        <img src="https://raw.githubusercontent.com/gervenbuy/repair-note/main/controller.jpg"
+             alt="控制器線路接頭標示"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div style="display:none; align-items:center; justify-content:center; height:180px; color:var(--muted); font-size:14px; flex-direction:column; gap:8px;">
+          <span style="font-size:2rem;">📷</span>
+          <span>controller.jpg</span>
+        </div>
+        <div class="img-caption">▲ 圖1：各接頭位置與線色標示</div>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec-item">
+          <div class="spec-label">類型</div>
+          <div class="spec-val">無刷超靜音</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">功率</div>
+          <div class="spec-val accent">450W</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">欠壓</div>
+          <div class="spec-val accent">29V / 40V</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">剎車方式</div>
+          <div class="spec-val">低電平</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">相位</div>
+          <div class="spec-val accent">120°</div>
+        </div>
+      </div>
+
+      <div style="font-size:13px; color:var(--muted); margin-bottom:6px;">接頭線色標示</div>
+      <div class="wire-row">
+        <span class="wire-tag wt-red"><span class="wire-dot"></span>報警器（紅）</span>
+        <span class="wire-tag wt-black"><span class="wire-dot"></span>儀表線（黑扁）</span>
+        <span class="wire-tag wt-gray"><span class="wire-dot"></span>剎車斷電</span>
+        <span class="wire-tag wt-orange"><span class="wire-dot"></span>大燈供電（紅正黑負）</span>
+        <span class="wire-tag wt-red"><span class="wire-dot"></span>剎車燈</span>
+      </div>
+
+      <div class="warn-block">
+        <span class="wi">⚠️</span>
+        <span>大燈供電接頭：<strong>紅線為正極、黑線為負極</strong>，接反會損壞燈具，請務必確認極性。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 儀表 -->
+  <div class="section-card" id="display">
+    <div class="section-header">
+      <div class="section-icon icon-amber">🔢</div>
+      <div>
+        <h2>NJAX-T 儀表設定</h2>
+        <p>奧雄儀表 · 36V/48V 通用款</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="spec-grid">
+        <div class="spec-item">
+          <div class="spec-label">適用車型</div>
+          <div class="spec-val">48V 電動滑板車</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">通用電壓</div>
+          <div class="spec-val">36V / 48V</div>
+        </div>
+      </div>
+      <table class="nb-table">
+        <thead>
+          <tr><th>參數</th><th>設定值</th><th>備註</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">P1</td>
+            <td class="mono">41.5</td>
+            <td style="color:var(--green);">✓ 已確認</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="warn-block" style="background:rgba(79,156,249,0.08); border-color:rgba(79,156,249,0.25); color:#93c5fd;">
+        <span class="wi">💡</span>
+        <span>進入設定方式：長按儀表按鍵進入 P 參數設定模式，依序調整。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 輪胎 -->
+  <div class="section-card" id="tire">
+    <div class="section-header">
+      <div class="section-icon icon-green">🔧</div>
+      <div>
+        <h2>輪胎共用規格</h2>
+        <p>10 吋輪胎互換資訊</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="spec-grid">
+        <div class="spec-item">
+          <div class="spec-label">規格 A</div>
+          <div class="spec-val accent">10 × 3.0</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">可互換規格</div>
+          <div class="spec-val accent">10 × 2.125</div>
+        </div>
+      </div>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:6px;">Ninebot 九號同尺寸可共用 · 適用型號</div>
+      <div class="compat-row">
+        <span class="compat-tag">D18W</span>
+        <span class="compat-tag">D38U</span>
+        <span class="compat-tag">F20</span>
+        <span class="compat-tag">F30</span>
+        <span class="compat-tag">F40</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 維修記錄 -->
+  <div class="section-card" id="log">
+    <div class="section-header">
+      <div class="section-icon icon-orange">📋</div>
+      <div>
+        <h2>維修記錄</h2>
+        <p>按時間順序記錄每次維修</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="empty-log">
+        <div class="big">🔩</div>
+        <div>尚無維修記錄</div>
+        <div style="margin-top:6px; font-size:12px;">有新維修時，請告知 Claude 幫你新增到這裡</div>
+      </div>
+
+      <!-- 範例（隱藏）：以後有維修記錄時照這格式新增
+      <div class="log-entry">
+        <div class="log-date">📅 2025-05-18 &nbsp;·&nbsp; 前輪異音處理</div>
+        <div class="log-body">
+          <p><span class="log-label">問題：</span>行駛時前輪發出規律性異音</p>
+          <p><span class="log-label">處理：</span>重新鎖緊輪轂螺絲，補充軸承潤滑脂</p>
+          <p><span class="log-label">零件：</span>無更換</p>
+          <p><span class="log-label">結果：</span>✅ 異音消除</p>
+        </div>
+      </div>
+      -->
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>🛴 電動滑板車維修筆記 · gervenbuy</span>
+  <span>最後更新：2025-05-18 &nbsp;·&nbsp;
+    <a href="https://github.com/gervenbuy/repair-note" target="_blank">GitHub ↗</a>
+  </span>
+</footer>
+
+</body>
+</html>
